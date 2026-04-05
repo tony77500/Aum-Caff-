@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aum Caffè — Samois-sur-Seine</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue-deep: #0d1b2a;
+    --blue-mid: #1b3a5c;
+    --blue-light: #2e6da4;
+    --blue-pale: #a8c8e8;
+    --wood-dark: #5c3d1e;
+    --wood-mid: #8b6640;
+    --wood-light: #c4a882;
+    --wood-pale: #e8d5b7;
+    --cream: #f5ede0;
+    --gold: #c9a84c;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    cursor: none;
+    background: var(--blue-deep);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* ── CURSEUR POINT DORÉ ── */
+  #cursor {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+  }
+  #cursor.hover {
+    width: 6px;
+    height: 6px;
+    opacity: 0.6;
+  }
+  #cursor-trail {
+    position: fixed;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(201,168,76,0.45);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  }
+  #cursor-trail.hover {
+    width: 52px;
+    height: 52px;
+    border-color: rgba(201,168,76,0.2);
+  }
+
+  /* ── GRAINS FLOTTANTS EN FOND ── */
+  #beans-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .bean-particle {
+    position: absolute;
+    opacity: 0.07;
+    will-change: transform;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(13,27,42,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(2px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: var(--wood-light);
+  }
+  .nav-logo span { font-style: italic; color: var(--gold); }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+  }
+  nav ul a {
+    text-decoration: none;
+    color: var(--wood-pale);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  nav ul a:hover { color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hero-wood-strip {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(to top, var(--wood-dark) 0%, transparent 100%);
+    opacity: 0.3;
+  }
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 10vw, 8rem);
+    line-height: 1;
+    color: var(--cream);
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--wood-light);
+    display: block;
+  }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-weight: 300;
+    color: var(--blue-pale);
+    letter-spacing: 0.15em;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.7s forwards;
+  }
+  .hero-cta {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    transition: all 0.4s;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+  .hero-cta:hover::before { transform: translateX(0); }
+  .hero-cta:hover { color: var(--blue-deep); }
+
+  /* Ligne déco */
+  .deco-line {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 2.5rem auto;
+    opacity: 0;
+    animation: fadeIn 1s 1.1s forwards;
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.5;
+    animation: fadeIn 1s 1.5s forwards;
+    z-index: 2;
+  }
+  .scroll-hint span {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--wood-pale);
+  }
+  .scroll-arrow {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* ── SECTION AMBIANCE ── */
+  .section-ambiance {
+    position: relative;
+    z-index: 1;
+    padding: 8rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+    color: var(--cream);
+    margin-bottom: 1.5rem;
+  }
+  .section-title em { font-style: italic; color: var(--wood-light); }
+  .section-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--wood-pale);
+  }
+
+  .wood-card {
+    background: linear-gradient(135deg, var(--wood-dark) 0%, var(--wood-mid) 60%, var(--wood-dark) 100%);
+    border-radius: 2px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .wood-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      88deg,
+      transparent 0px, transparent 18px,
+      rgba(255,255,255,0.02) 18px, rgba(255,255,255,0.02) 19px
+    );
+  }
+  .wood-card-bean {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    opacity: 0.2;
+  }
+  .wood-stat {
+    margin-top: 2rem;
+    display: flex;
+    gap: 2.5rem;
+  }
+  .wood-stat-item { }
+  .wood-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .wood-stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--wood-pale);
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
+  /* ── RÉSERVATION ── */
+  .section-resa {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 4rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(27,58,92,0.15) 50%, transparent 100%);
+  }
+  .section-resa-inner { max-width: 820px; margin: 0 auto; }
+  .resa-header { text-align: center; margin-bottom: 3.5rem; }
+
+  .resa-form {
+    background: rgba(27,58,92,0.18);
+    border: 1px solid rgba(168,200,232,0.1);
+    border-radius: 2px;
+    padding: 3rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .resa-form::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .resa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .resa-field { display: flex; flex-direction: column; gap: 6px; }
+  .resa-field.full { grid-column: 1 / -1; }
+
+  .resa-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+  }
+  .resa-input {
+    background: rgba(13,27,42,0.6);
+    border: 1px solid rgba(168,200,232,0.15);
+    border-radius: 1px;
+    padding: 0.85rem 1rem;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s;
+    width: 100%;
+    cursor: none;
+  }
+  .resa-input:focus {
+    border-color: rgba(201,168,76,0.5);
+    background: rgba(13,27,42,0.9);
+  }
+  .resa-input option { background: #0d1b2a; }
+
+  .resa-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 1.1rem;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .resa-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    z-index: 0;
+  }
+  .resa-submit:hover::before { transform: translateX(0); }
+  .resa-submit:hover { color: var(--blue-deep); }
+  .resa-submit span { position: relative; z-index: 1; }
+
+  /* Confirmation */
+  .resa-confirm {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+  .resa-confirm.show { display: block; }
+  .resa-confirm-icon {
+    width: 56px; height: 56px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .resa-confirm-icon svg { width: 24px; height: 24px; stroke: var(--gold); fill: none; }
+  .resa-confirm-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--cream);
+    margin-bottom: 0.8rem;
+  }
+  .resa-confirm-title em { font-style: italic; color: var(--wood-light); }
+  .resa-confirm-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--blue-pale);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .resa-confirm-detail {
+    margin-top: 2rem;
+    padding: 1.2rem 2rem;
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 1px;
+    font-size: 0.85rem;
+    color: var(--wood-pale);
+    line-height: 1.9;
+  }
+  .resa-confirm-detail strong { color: var(--gold); font-weight: 400; }
+  .resa-reset {
+    margin-top: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--blue-pale);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: none;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    text-decoration: underline;
+  }
+  .resa-reset:hover { opacity: 1; }
+
+  /* ── CONTACT ── */
+  .section-contact {
+    position: relative;
+    z-index: 1;
+    padding: 8rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+  .contact-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .contact-icon {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(201,168,76,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .contact-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--gold);
+    fill: none;
+  }
+  .contact-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+    margin-bottom: 4px;
+  }
+  .contact-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+  .map-placeholder {
+    background: linear-gradient(135deg, var(--blue-mid) 0%, var(--wood-dark) 100%);
+    border-radius: 2px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent 0px, transparent 20px,
+      rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.021) 21px
+    );
+  }
+  .map-pin {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .map-pin-dot {
+    width: 14px;
+    height: 14px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin: 0 auto 0.75rem;
+    box-shadow: 0 0 0 6px rgba(201,168,76,0.2), 0 0 0 12px rgba(201,168,76,0.08);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .map-pin-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 4rem;
+    border-top: 1px solid rgba(168,200,232,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--wood-light);
+  }
+  .footer-logo em { font-style: italic; color: var(--gold); }
+  .footer-copy {
+    font-size: 0.72rem;
+    color: var(--blue-pale);
+    opacity: 0.5;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50%       { transform: scaleY(1.3); opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 6px rgba(201,168,76,0.2), 0 0 0 12px rgba(201,168,76,0.08); }
+    50%       { box-shadow: 0 0 0 10px rgba(201,168,76,0.15), 0 0 0 20px rgba(201,168,76,0.04); }
+  }
+  @keyframes floatBean {
+    0%   { transform: translateY(0px) rotate(0deg); opacity: 0.07; }
+    50%  { transform: translateY(-20px) rotate(8deg); opacity: 0.12; }
+    100% { transform: translateY(0px) rotate(0deg); opacity: 0.07; }
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.2rem; }
+    nav ul { display: none; }
+    .nav-logo { font-size: 1.2rem; }
+    .hero-title { font-size: 3.5rem; }
+    .hero-subtitle { font-size: 1rem; letter-spacing: 0.08em; }
+    .hero-cta { padding: 0.9rem 1.8rem; font-size: 0.72rem; }
+    .section-ambiance { grid-template-columns: 1fr; gap: 2.5rem; padding: 3.5rem 1.2rem; }
+    .section-title { font-size: 1.8rem; }
+    .wood-stat { gap: 1.5rem; }
+    .wood-stat-num { font-size: 2rem; }
+    .section-resa { padding: 3.5rem 1.2rem; }
+    .resa-form { padding: 1.5rem 1.2rem; }
+    .resa-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+    .resa-field.full { grid-column: 1; }
+    .resa-input { font-size: 1rem; padding: 0.9rem 0.9rem; }
+    .resa-submit { font-size: 0.82rem; padding: 1rem; letter-spacing: 0.15em; }
+    .resa-confirm { padding: 2rem 1rem; }
+    .resa-confirm-detail { padding: 1rem; font-size: 0.82rem; }
+    .section-contact { grid-template-columns: 1fr; gap: 2.5rem; padding: 3.5rem 1.2rem; }
+    .map-placeholder { height: 220px; }
+    .contact-value { font-size: 1rem; }
+    footer { flex-direction: column; gap: 0.8rem; padding: 2rem 1.2rem; text-align: center; }
+    #cursor, #cursor-trail { display: none; }
+    body { cursor: auto; }
+    .resa-input, .resa-submit, .resa-reset { cursor: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Curseur personnalisé -->
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<!-- Grains de fond -->
+<div id="beans-bg"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">Aum <span>Caffè</span></div>
+  <ul>
+    <li><a href="#ambiance">L'esprit</a></li>
+    <li><a href="#reservation">Réserver</a></li>
+    <li><a href="#contact">Nous trouver</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-wood-strip"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Café artisanal · Samois-sur-Seine · Seine-et-Marne</p>
+    <h1 class="hero-title">Aum<em>Caffè</em></h1>
+    <p class="hero-subtitle">L'art du café, l'âme du lieu</p>
+    <div class="deco-line"></div>
+    <a href="#reservation" class="hero-cta">Réserver une table</a>
+  </div>
+  <div class="scroll-hint">
+    <span>Défiler</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- AMBIANCE -->
+<section id="ambiance" style="position:relative;z-index:1;">
+  <div class="section-ambiance">
+    <div class="reveal">
+      <p class="section-label">Notre histoire</p>
+      <h2 class="section-title">Un café, <em>un refuge</em></h2>
+      <p class="section-body">
+        Aum Caffè est né d'une passion simple : offrir un espace où chaque tasse raconte une histoire. Du grain à la tasse, nous sélectionnons des cafés d'exception, torréfiés avec soin, pour éveiller vos sens à chaque visite.<br><br>
+        L'atmosphère boisée, les lumières douces et le murmure des conversations créent ce sentiment rare d'être chez soi, loin du reste du monde.
+      </p>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s">
+      <div class="wood-card">
+        <!-- Ligne déco top -->
+        <div style="width:40px;height:1px;background:var(--gold);margin-bottom:2rem;opacity:0.7;"></div>
+
+        <p class="section-label">L'expérience</p>
+
+        <div style="display:flex;flex-direction:column;gap:1.5rem;margin-top:1rem;">
+
+          <div style="display:flex;align-items:flex-start;gap:1rem;">
+            <div style="width:1px;height:100%;background:rgba(201,168,76,0.3);flex-shrink:0;margin-top:4px;align-self:stretch;"></div>
+            <div>
+              <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Cuisine</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--wood-pale);line-height:1.6;font-weight:300;">Produits frais, recettes généreuses, saveurs authentiques du quotidien.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:1rem;">
+            <div style="width:1px;background:rgba(201,168,76,0.3);flex-shrink:0;margin-top:4px;align-self:stretch;"></div>
+            <div>
+              <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Cadre</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--wood-pale);line-height:1.6;font-weight:300;">Au bord de la Seine, une salle chaleureuse où le temps s'arrête.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-start;gap:1rem;">
+            <div style="width:1px;background:rgba(201,168,76,0.3);flex-shrink:0;margin-top:4px;align-self:stretch;"></div>
+            <div>
+              <div style="font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Esprit</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--wood-pale);line-height:1.6;font-weight:300;">Un lieu de vie, de partage, ouvert à tous — en famille, entre amis ou en amoureux.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RÉSERVATION -->
+<section id="reservation" class="section-resa">
+  <div class="section-resa-inner">
+    <div class="resa-header reveal">
+      <p class="section-label" style="text-align:center;">Réserver une table</p>
+      <h2 class="section-title" style="text-align:center;">Votre <em>moment</em></h2>
+      <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--blue-pale);font-weight:300;margin-top:0.8rem;">
+        Garantissez votre place dans notre espace chaleureux
+      </p>
+    </div>
+
+    <div class="resa-form reveal" style="transition-delay:0.2s" id="resa-form-wrap">
+
+      <!-- Formulaire -->
+      <div id="resa-form-inner">
+        <form action="https://formspree.io/f/xdapprvd" method="POST" onsubmit="handleResa(event)">
+        <div class="resa-grid">
+          <div class="resa-field">
+            <label class="resa-label" for="resa-nom">Nom & Prénom</label>
+            <input class="resa-input" type="text" id="resa-nom" name="nom" placeholder="Marie Dupont">
+          </div>
+          <div class="resa-field">
+            <label class="resa-label" for="resa-tel">Téléphone</label>
+            <input class="resa-input" type="tel" id="resa-tel" name="telephone" placeholder="06 00 00 00 00">
+          </div>
+          <div class="resa-field">
+            <label class="resa-label" for="resa-date">Date</label>
+            <input class="resa-input" type="date" id="resa-date" name="date">
+          </div>
+          <div class="resa-field">
+            <label class="resa-label" for="resa-heure">Heure</label>
+            <select class="resa-input" id="resa-heure" name="heure">
+              <option value="">Choisir un créneau</option>
+              <option>07:00</option><option>07:30</option>
+              <option>08:00</option><option>08:30</option>
+              <option>09:00</option><option>09:30</option>
+              <option>10:00</option><option>10:30</option>
+              <option>11:00</option><option>11:30</option>
+              <option>12:00</option><option>12:30</option>
+              <option>13:00</option><option>13:30</option>
+              <option>14:00</option><option>14:30</option>
+              <option>15:00</option><option>15:30</option>
+              <option>16:00</option><option>16:30</option>
+              <option>17:00</option><option>17:30</option>
+              <option>18:00</option><option>18:30</option>
+              <option>19:00</option>
+            </select>
+          </div>
+          <div class="resa-field">
+            <label class="resa-label" for="resa-couverts">Nombre de personnes</label>
+            <select class="resa-input" id="resa-couverts" name="personnes">
+              <option value="">Combien êtes-vous ?</option>
+              <option>1 personne</option>
+              <option>2 personnes</option>
+              <option>3 personnes</option>
+              <option>4 personnes</option>
+              <option>5 personnes</option>
+              <option>6 personnes</option>
+              <option>7 personnes ou plus</option>
+            </select>
+          </div>
+          <div class="resa-field">
+            <label class="resa-label" for="resa-email">E-mail (optionnel)</label>
+            <input class="resa-input" type="email" id="resa-email" name="email" placeholder="marie@email.com">
+          </div>
+          <div class="resa-field full">
+            <label class="resa-label" for="resa-message">Message ou demande particulière</label>
+            <textarea class="resa-input" id="resa-message" name="message" rows="3" placeholder="Anniversaire, allergie, chaise haute…" style="resize:vertical;font-family:'DM Sans',sans-serif;"></textarea>
+          </div>
+        </div>
+
+        <p id="resa-error" style="display:none;color:#e07070;font-size:0.78rem;letter-spacing:0.1em;margin-bottom:1rem;text-align:center;"></p>
+
+        <button type="submit" class="resa-submit">
+          <span>Confirmer ma réservation</span>
+        </button>
+
+        <p style="text-align:center;margin-top:1.2rem;font-size:0.72rem;color:var(--blue-pale);opacity:0.6;line-height:1.6;">
+          Nous vous confirmerons par téléphone dès que possible.<br>
+          Pour toute urgence : <span style="color:var(--gold);">09 56 06 88 45</span>
+        </p>
+        </form>
+      </div>
+
+      <!-- Confirmation -->
+      <div class="resa-confirm" id="resa-confirm">
+        <div class="resa-confirm-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="resa-confirm-title">À très <em>bientôt</em></div>
+        <div class="resa-confirm-body">Votre demande a bien été enregistrée.<br>Nous vous recontactons très prochainement.</div>
+        <div class="resa-confirm-detail" id="resa-recap"></div>
+        <button class="resa-reset" onclick="resetResa()">← Faire une autre réservation</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-contact">
+    <div class="reveal">
+      <p class="section-label">Venez nous voir</p>
+      <h2 class="section-title">Nous <em>trouver</em></h2>
+
+      <div style="margin-top:2.5rem;">
+        <div class="contact-info-row">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 21s-8-7.5-8-12a8 8 0 0116 0c0 4.5-8 12-8 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Adresse</div>
+            <div class="contact-value">17 Quai de la République<br>77920 Samois-sur-Seine, France</div>
+          </div>
+        </div>
+
+        <div class="contact-info-row">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Téléphone</div>
+            <div class="contact-value">09 56 06 88 45</div>
+          </div>
+        </div>
+
+        <div class="contact-info-row">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Horaires</div>
+            <div class="contact-value">Lun – Ven : 7h00 – 19h00<br>Sam – Dim : 8h00 – 20h00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="transition-delay:0.2s">
+      <div style="border-radius:2px;overflow:hidden;border:1px solid rgba(168,200,232,0.12);">
+        <iframe
+          src="https://maps.google.com/maps?q=17+Quai+de+la+République,+77920+Samois-sur-Seine,+France&output=embed&z=16"
+          width="100%"
+          height="300"
+          style="display:block;border:0;filter:grayscale(30%) contrast(1.1);"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Localisation Aum Caffè">
+        </iframe>
+      </div>
+      <a href="https://maps.google.com/?q=17+Quai+de+la+République+77920+Samois-sur-Seine+France"
+         target="_blank"
+         style="display:block;text-align:center;margin-top:1rem;font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;opacity:0.8;transition:opacity 0.3s;"
+         onmouseover="this.style.opacity='1'"
+         onmouseout="this.style.opacity='0.8'">
+        Ouvrir dans Google Maps →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Aum <em>Caffè</em></div>
+  <div class="footer-copy">© 2025 Aum Caffè · Samois-sur-Seine · Tous droits réservés</div>
+</footer>
+
+<script>
+  // ── CURSEUR POINT DORÉ ──
+  const cursor = document.getElementById('cursor');
+  const trail = document.getElementById('cursor-trail');
+  let mx = 0, my = 0, tx = 0, ty = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+  });
+
+  function animTrail() {
+    tx += (mx - tx) * 0.10;
+    ty += (my - ty) * 0.10;
+    trail.style.left = tx + 'px';
+    trail.style.top  = ty + 'px';
+    requestAnimationFrame(animTrail);
+  }
+  animTrail();
+
+  // Effet hover sur liens et boutons
+  document.querySelectorAll('a, button, input, select, textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); trail.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); trail.classList.remove('hover'); });
+  });
+
+  document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%,-50%) scale(0.5)');
+  document.addEventListener('mouseup',   () => cursor.style.transform = 'translate(-50%,-50%) scale(1)');
+
+  // ── GRAINS DE FOND ──
+  const bg = document.getElementById('beans-bg');
+  const BEAN_COUNT = 28;
+
+  function beanSVG(size, color) {
+    return `<svg width="${size}" height="${size*0.7}" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="14" cy="10" rx="12" ry="8" fill="${color}"/>
+      <path d="M7 10 C9 8 11 9 14 8 C17 7 19 8 21 10" stroke="rgba(92,61,30,0.5)" stroke-width="1.5" fill="none"/>
+      <ellipse cx="14" cy="10" rx="12" ry="8" stroke="rgba(92,61,30,0.3)" stroke-width="0.8" fill="none"/>
+    </svg>`;
+  }
+
+  const beanColors = ['#8b6640','#5c3d1e','#c4a882','#2e6da4','#1b3a5c'];
+  const beans = [];
+
+  for (let i = 0; i < BEAN_COUNT; i++) {
+    const el = document.createElement('div');
+    el.className = 'bean-particle';
+    const size = 30 + Math.random() * 60;
+    const color = beanColors[Math.floor(Math.random() * beanColors.length)];
+    el.innerHTML = beanSVG(size, color);
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top  = Math.random() * 300 + 'vh';
+    const rot = Math.random() * 360;
+    el.style.transform = `rotate(${rot}deg)`;
+    const duration = 6 + Math.random() * 8;
+    const delay = Math.random() * 6;
+    el.style.animation = `floatBean ${duration}s ${delay}s ease-in-out infinite`;
+    bg.appendChild(el);
+    beans.push({ el, baseTop: parseFloat(el.style.top), speed: 0.04 + Math.random() * 0.1 });
+  }
+
+  // Parallaxe au scroll
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    beans.forEach(b => {
+      const offset = scrollY * b.speed;
+      b.el.style.top = (b.baseTop - offset / (window.innerHeight / 100)) + 'vh';
+    });
+  });
+
+  // ── RÉSERVATION NETLIFY ──
+  const dateInput = document.getElementById('resa-date');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+    dateInput.value = today;
+  }
+
+  function handleResa(e) {
+    e.preventDefault();
+    const nom      = document.getElementById('resa-nom').value.trim();
+    const tel      = document.getElementById('resa-tel').value.trim();
+    const date     = document.getElementById('resa-date').value;
+    const heure    = document.getElementById('resa-heure').value;
+    const couverts = document.getElementById('resa-couverts').value;
+    const errEl    = document.getElementById('resa-error');
+
+    if (!nom || !tel || !date || !heure || !couverts) {
+      errEl.textContent = '⚠ Veuillez remplir tous les champs obligatoires.';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    // Envoi à Netlify
+    const form = e.target;
+    const formData = new FormData(form);
+    fetch('https://formspree.io/f/xdapprvd', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } })
+      .then(() => {
+        // Afficher confirmation
+        const d = new Date(date + 'T00:00:00');
+        const dateStr = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+        document.getElementById('resa-recap').innerHTML =
+          `<strong>Nom :</strong> ${nom}<br>` +
+          `<strong>Date :</strong> ${dateStr}<br>` +
+          `<strong>Heure :</strong> ${heure}<br>` +
+          `<strong>Personnes :</strong> ${couverts}<br>` +
+          `<strong>Contact :</strong> ${tel}`;
+        document.getElementById('resa-form-inner').style.display = 'none';
+        const confirm = document.getElementById('resa-confirm');
+        confirm.classList.add('show');
+      })
+      .catch(() => {
+        errEl.textContent = '⚠ Une erreur est survenue, veuillez réessayer ou appeler le 09 56 06 88 45.';
+        errEl.style.display = 'block';
+      });
+  }
+
+  function resetResa() {
+    document.getElementById('resa-form-inner').style.display = 'block';
+    document.getElementById('resa-confirm').classList.remove('show');
+    document.getElementById('resa-nom').value = '';
+    document.getElementById('resa-tel').value = '';
+    document.getElementById('resa-heure').value = '';
+    document.getElementById('resa-couverts').value = '';
+    document.getElementById('resa-email').value = '';
+    document.getElementById('resa-message').value = '';
+  }
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+</body>
+</html>
