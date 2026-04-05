@@ -730,7 +730,12 @@
 
       <!-- Formulaire -->
       <div id="resa-form-inner">
-        <form action="https://formspree.io/f/xdapprvd" method="POST" onsubmit="handleResa(event)">
+        <form action="https://formsubmit.co/EMAIL_DU_CLIENT" method="POST" onsubmit="handleResa(event)">
+        <!-- Formsubmit config -->
+        <input type="hidden" name="_subject" value="Nouvelle réservation — Aum Caffè">
+        <input type="hidden" name="_next" value="">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none">
         <div class="resa-grid">
           <div class="resa-field">
             <label class="resa-label" for="resa-nom">Nom & Prénom</label>
@@ -979,10 +984,10 @@
     }
     errEl.style.display = 'none';
 
-    // Envoi à Netlify
+    // Envoi via Formsubmit
     const form = e.target;
     const formData = new FormData(form);
-    fetch('https://formspree.io/f/xdapprvd', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } })
+    fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } })
       .then(() => {
         // Afficher confirmation
         const d = new Date(date + 'T00:00:00');
